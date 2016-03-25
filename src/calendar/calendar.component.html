@@ -1,0 +1,52 @@
+
+
+<div class="container">
+    <div class="toolbar">
+        <div class="title">
+            Calendar
+        </div>
+        
+        <div class="new-form">
+            <input type="text" [(ngModel)]="newEvent.name" placeholder="Name"> 
+            <input type="text" [(ngModel)]="newEvent.startDate" placeholder="Date">
+            <button (click)="addNewEvent()">Add</button>
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn" (click)="setCalView('Week')" [ngClass]="{active: viewType === 'Week'}">Week</button>
+            <button class="btn" (click)="setCalView('Month')" [ngClass]="{active: viewType === 'Month'}">Month</button>
+        </div>
+    </div>
+    
+    <p></p>
+    <div class="weekdays-long">
+        <div class="weekdays">
+            <div class="name" *ngFor="#weekday of weekdays">
+                {{weekday}}
+            </div>
+        </div>
+    </div>
+    <div class="weekdays-short">
+        <div class="weekdays">
+            <div class="name" *ngFor="#weekday of weekdaysShort">
+                {{weekday}}
+            </div>
+        </div>
+    </div>
+    <div class="calendar month">
+        
+        <div class="day" *ngFor="#day of days" [ngClass]="{today: day.isToday, selected: selectedDay === day.date}" (click)="dayClick(day, $event)">
+            <div class="day-container">
+                <span class="number">
+                    {{day.dayOfMonth}}
+                </span>
+                
+                <div class="events">
+                    <div class="event" *ngFor="#event of day.events" (click)="eventClick(event, $event)">
+                        <span class="event-name">{{event.name}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
