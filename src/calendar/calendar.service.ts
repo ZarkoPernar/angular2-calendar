@@ -1,14 +1,39 @@
 interface Item {
-    name: String,
-    createdAt: Number,
+    name: string,
+    //createdAt: number,
+    startDate: string,
+    endDate?: string
 }
 
-export class CalendarService {
-    items: Array<Item>
-    constructor() {
-        
-    }
+let CalendarService = {
+    items: [
+        {
+            name: 'Hello!',
+            startDate: '03.11.2016'
+        },
+        {
+            name: 'Hello Again!',
+            startDate: '03.18.2016'
+        }
+    ],
+    event: {
+        name: '',
+        startDate: ''
+    },
+    clearNew() {
+        this.event = {
+            name: '',
+            startDate: ''
+        }  
+    },    
+    addNewEvent() {
+        this.events.push(this.event)    
+        this.clearNew()
+    }   
 }
+
+export default CalendarService
+
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)

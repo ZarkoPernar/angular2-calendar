@@ -11,6 +11,22 @@
     font-weight: 300;
 }
 
+.toolbar > .btn {
+    background: #fff;
+    border-radius: 40px;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 0;
+    outline: none;
+}
+.toolbar > .btn:active {
+    background: #ccc;
+    border: 1px solid #ccc;
+    color: #333;
+}
+
 .container {
     padding: 20px 5px;
     height: calc(100vh - 96px);
@@ -20,7 +36,13 @@
     display: none;
 }
 
-@media (max-width: 768px) {    
+.cal-controls {
+    width: 300px;
+    display: flex;
+    justify-content: space-between;
+}
+
+@media (max-width: 991px) {    
     .new-form {
         display: none;
     }
@@ -78,6 +100,9 @@
 }
 
 .day .day-container {
+    height: 100%;
+    width: 100%;
+    position: absolute;
     padding: 2px;
     padding-top: 25px;
     border: 1px solid #eee;
@@ -107,6 +132,9 @@
     color: orangered;
 }
 
+.day .events {
+    height: 100%;
+}
 .month .day .events {
     display: flex;
 }
@@ -137,6 +165,9 @@
     }
     .weekdays-short {
         display: none;
+    }
+    .month .day .events {
+        display: block;
     }
     .month .day .events .event {
         width: 100%;

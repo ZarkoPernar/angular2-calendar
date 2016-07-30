@@ -1,4 +1,4 @@
-import { Component, View, Input } from 'angular2/core';
+import { Component, View, Input, Output } from 'angular2/core';
 import { NgFor, NgClass, FORM_DIRECTIVES } from 'angular2/common';
 
 @Component({
@@ -21,7 +21,7 @@ import { NgFor, NgClass, FORM_DIRECTIVES } from 'angular2/common';
 })
 export class DayComponent {
     @Input() day: any
-    @Output
+    @Output() dayClick
     
     constructor() {
         

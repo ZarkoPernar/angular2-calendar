@@ -1,0 +1,11 @@
+<div class="modal" [ngClass]="{open: isOpen}">
+    <div class="modal-body">
+        <button class="btn close" (click)="close()">&times;</button>
+        <div class="new-form">
+            <input type="text" [(ngModel)]="event.name" placeholder="Name"> 
+            <input type="text" [(ngModel)]="event.startDate" placeholder="Date">
+            <button (click)="addNewEvent()">Add</button>
+        </div>    
+    </div>
+</div>
+<div class="modal-backdrop" [ngClass]="{open: isOpen}"></div>

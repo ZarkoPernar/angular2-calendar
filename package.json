@@ -1,7 +1,7 @@
 {
   "name": "angular2-calendar",
   "version": "0.1.0",
-  "description": "Seed for Angular 2 apps",
+  "description": "Calendar in Angular 2",
   "repository": {
     "url": "https://github.com/zarkopernar/angular2-calendar"
   },

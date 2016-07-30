@@ -1,7 +1,8 @@
-import { Component, View } from 'angular2/core';
+import { Component, View, EventEmitter } from 'angular2/core';
 import { NgFor, NgClass, FORM_DIRECTIVES } from 'angular2/common';
 
-import {DayComponent} from './day/day.component';
+import {ModalComponent} from './modal/modal.component';
+import CalendarService from './calendar.service'
 
 const moment = require('moment/moment');
 
@@ -11,11 +12,11 @@ const MONTHS_SHORT = moment.monthsShort()
 const WEEKDAYS = moment.weekdays()
 const WEEKDAYS_SHORT = moment.weekdaysShort()
 const WEEKDAYS_MIN = moment.weekdaysMin()
-const NTH_OF_MONTH = Math.ceil(NOW.date() / 7)
-const TOTAL_DAYS = 35;
 
-const CAL_N_DAYS = NOW.daysInMonth(); //const for now
-const CURRENT_WEEK = getWeekIndex(moment())
+const getWeekNumber = m => Math.ceil(m.date() / 7)
+const getMonthName = m => MONTHS[m.month()]
+const TOTAL_DAYS_MONTH = 35;
+
 
 let events = [
     {
@@ -29,15 +30,15 @@ let events = [
 ]
     
 interface CalEvent {
-    name: String
-    startDate: String
+    name: string
+    startDate: string
 } 
 
 interface DAY {
-    dayOfMonth: Number
-    dayOfWeek: String
+    dayOfMonth: number
+    dayOfWeek: string
     moment: any
-    date: String
+    date: string
     events: Array<CalEvent>
 }
 
@@ -46,41 +47,48 @@ interface DAY {
   moduleId: module.id,
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
-  directives: [DayComponent, NgFor, NgClass, FORM_DIRECTIVES],
+  directives: [ModalComponent, NgFor, NgClass, FORM_DIRECTIVES],
 })
 
 export class CalendarComponent {
     days: Array<DAY>
-    weekdays: Array<String>
-    weekdaysShort: Array<String>
-    viewType: String
+    weekdays: Array<string>
+    weekdaysShort: Array<string>
     newEvent: CalEvent
-    selectedWeek: Number
-    selectedDay: String
+    isModalOpen: boolean
+    modality = new EventEmitter()
+    
+    viewType: string    
+    selectedDay: string
+    monthName: string
+    weekNumber: number
+    center: any
         
     constructor() {                    
-        this.selectedWeek = CURRENT_WEEK
-                        
-        this.viewType = 'Month';                    
+                       
+        this.monthName = getMonthName(NOW)                  
         this.weekdays = WEEKDAYS
         this.weekdaysShort = WEEKDAYS_SHORT
-        this.build();     
-        this.clearNew()
+        this.center = NOW.clone()
+        
+        this.setStuff(this.center.clone())
+        this.setCalView('Week');
+        this.selectedDay = ''
     }
     
-    clearNew() {
-        this.newEvent = {
-            name: '',
-            startDate: ''
-        }  
+    setStuff(m) {
+        this.center = m
+        this.monthName = getMonthName(m)
+        this.weekNumber = getWeekNumber(m)
     }
+    
+    
     
     build() {
         if (this.viewType === 'Week') {
-            let start = moment().date()
-            this.days = MonthFactory((start + 7), (start + 7), start); 
+            this.days = WeekFactory(this.center);
         } else {
-            this.days = MonthFactory(CAL_N_DAYS, TOTAL_DAYS, 1); 
+            this.days = MonthFactory(this.center); 
         }
         this.addEvents()
     }
@@ -94,10 +102,7 @@ export class CalendarComponent {
         this.build()
     }
     
-    addNewEvent() {
-        this.addEvent(this.newEvent)    
-        this.clearNew()
-    }
+    
     
     addEvent(event) {       
         let index = this.days.findIndex(day => day.date === event.startDate)
@@ -110,9 +115,7 @@ export class CalendarComponent {
     dayClick(day, jsEvent) {
         if (day.date === this.selectedDay) {
             this.selectedDay = ''     
-            this.clearNew()       
         } else {
-            this.newEvent.startDate = day.date
             this.selectedDay = day.date   
         }          
     }
@@ -122,47 +125,83 @@ export class CalendarComponent {
         console.log(event);        
     }
     
+    moveCalLeft() {
+        let newM;
+        if (this.viewType === 'Week') {
+            newM = this.center.clone().subtract(1, 'weeks')
+        } else {
+            newM = this.center.clone().subtract(1, 'months')
+        }
+        this.setStuff(newM)
+        this.build()
+    }
+    
+    moveCalRight() {
+        let newM;
+        if (this.viewType === 'Week') {
+            newM = this.center.clone().add(1, 'weeks')
+        } else {
+            newM = this.center.clone().add(1, 'months')
+        }
+        this.setStuff(newM)
+        this.build()
+    }
+    
+    openModal() {                
+        this.isModalOpen = true
+        this.modality.next()
+    }
+    
 }
 
-function MonthFactory(endAt, total, startAt) {
-    console.log(endAt, total, startAt);
+function MonthFactory(m) {  
+    let startAt = m.clone().startOf('month')
+    let endAt = m.clone().endOf('month')
     
-    const remain = total - endAt;
-    let days = [];
-    let insert = []
-    let main = [];
-    let insertFront = 0;
-    let insertBack = 0;        
-    
-    for (var i = startAt; i < (endAt + 1); i++) {
-        main.push(DayFactory(i));
+    let monthTotal = endAt.date()
+    let remain = TOTAL_DAYS_MONTH - monthTotal;
+    let days = [DayFactory(startAt.clone())];
+    let insertFront = remain ? days[0].dayOfWeek : 0;
+    let insertBack = remain ? remain - insertFront : 0;           
+        
+    for (var i = 1; i < monthTotal; i++) {
+        days.push(DayFactory(startAt.clone().add(i, 'day')));
     }
-    
-    insertFront = remain ? main[0].dayOfWeek : 0;
-    insertBack = remain ? remain - insertFront : 0
         
     if (insertFront) {
-        for (let inF = 0; inF < insertFront; inF++) {
-            insert.push(DayFactory(((inF + 1) - insertFront)));
-        }
+        let i;
+        for (i = 1; i <= insertFront; i++) {            
+            let momento = startAt.clone().subtract(i, 'day')
+            days.unshift(DayFactory(momento));
+        }        
     }
-    
-    days = insert.concat(main)
-    
+        
     if (insertBack) {
-        for (let inB = 0; inB < insertBack; inB++) {
-            days.push(DayFactory(((inB + 1) + endAt)));
+        let i;
+        for (i = 1; i <= insertBack; i++) {
+            let momento = endAt.clone().add(i, 'day')
+            days.push(DayFactory(momento));
         }
     }    
     
     return days;
 }
 
-function DayFactory(i) {
-    let mm = moment().date(i),
-        dayOfMonth = mm.date(),
-        dayOfWeek = mm.weekday(),
-        date = mm.format('MM.DD.YYYY'),
+function WeekFactory(m) {
+    let startAt =   m.clone().startOf('week')
+    let days = [DayFactory(startAt.clone())];
+    
+    for (var i = 1; i < 7; i++) {
+        days.push(DayFactory(startAt.clone().add(i, 'day')));
+    }
+        
+    return days;
+}
+
+function DayFactory(m) {
+    let dayOfMonth = m.date(),
+        dayOfWeek = m.weekday(),
+        date = m.format('MM.DD.YYYY'),
         weekday = moment.weekdays(dayOfWeek);
         
     return {
@@ -170,14 +209,10 @@ function DayFactory(i) {
         dayOfWeek: dayOfWeek,
         weekday: weekday,
         date: date,
-        isToday: NOW.isSame(mm, 'day'),
+        isToday: NOW.isSame(m, 'day'),
         events: [],
         
         // add moment just cause
-        moment: moment(i),
+        moment: m,
     }
-}
-
-function getWeekIndex(m) {
-    return Math.ceil(m.date() / 7)
 }
