@@ -103,10 +103,10 @@
     height: 100%;
     width: 100%;
     position: absolute;
-    padding: 2px;
-    padding-top: 25px;
+    padding: 25px 2px;
     border: 1px solid #eee;
     border-radius: 2px;
+    
 }
 
 .day .number {
@@ -134,6 +134,7 @@
 
 .day .events {
     height: 100%;
+    overflow: hidden;
 }
 .month .day .events {
     display: flex;

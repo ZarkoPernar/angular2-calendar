@@ -1,17 +1,9 @@
 
-<calendar-modal (eventAdded)="addEvent()" [selected]="selectedDay" [isOpen]="isModalOpen"></calendar-modal>
+<calendar-modal (eventAdded)="addEvent()" [selected]="selectedDay" [isOpen]="isModalOpen" [service]="service" (closed)="modalClosed($event)"></calendar-modal>
+
 <div class="container">
-    <div class="toolbar">
-        
-        
-        <!--<div class="new-form">
-            <input type="text" [(ngModel)]="newEvent.name" placeholder="Name"> 
-            <input type="text" [(ngModel)]="newEvent.startDate" placeholder="Date">
-            <button (click)="addNewEvent()">Add</button>
-        </div>-->
-        
+    <div class="toolbar">        
         <button class="btn" (click)="openModal()">+</button>
-                
         
         <div class="cal-controls">
             <button class="btn" (click)="moveCalLeft()">&larr;</button>
@@ -42,20 +34,16 @@
             </div>
         </div>
     </div>
-    <div class="calendar month">
-        
-        <div class="day" *ngFor="#day of days" [ngClass]="{today: day.isToday, selected: selectedDay === day.date}" (click)="dayClick(day, $event)">
-            <div class="day-container">
-                <span class="number">
-                    {{day.dayOfMonth}}
-                </span>
-                
-                <div class="events">
-                    <div class="event" *ngFor="#event of day.events" (click)="eventClick(event, $event)">
-                        <span class="event-name">{{event.name}}</span>
-                    </div>
-                </div>
-            </div>
+    <div class="calendar month">        
+        <div
+            cal-day 
+            *ngFor="#day of days" 
+            [day]="day" 
+            [events]="events[day.date]" 
+            class="day" 
+            [ngClass]="{today: day.isToday, selected: selectedDay === day.date}" 
+            (click)="dayClick(day, $event)" 
+            #day>
         </div>
     </div>
 </div>

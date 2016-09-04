@@ -3,6 +3,7 @@ import { NgFor, NgClass, FORM_DIRECTIVES } from 'angular2/common';
 
 import {ModalComponent} from './modal/modal.component';
 import CalendarService from './calendar.service'
+import CalDay from './day/day.component'
 
 const moment = require('moment/moment');
 
@@ -21,11 +22,11 @@ const TOTAL_DAYS_MONTH = 35;
 let events = [
     {
         name: 'Hello!',
-        startDate: '03.11.2016'
+        startDate: '09.10.2016'
     },
     {
         name: 'Hello Again!',
-        startDate: '03.18.2016'
+        startDate: '09.08.2016'
     }
 ]
     
@@ -45,9 +46,9 @@ interface DAY {
 @Component({
   selector: 'my-calendar',
   moduleId: module.id,
+//   styleUrls: ['./calendar.component.css'],
   templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css'],
-  directives: [ModalComponent, NgFor, NgClass, FORM_DIRECTIVES],
+  directives: [CalDay, ModalComponent, NgFor, NgClass, FORM_DIRECTIVES],
 })
 
 export class CalendarComponent {
@@ -57,6 +58,9 @@ export class CalendarComponent {
     newEvent: CalEvent
     isModalOpen: boolean
     modality = new EventEmitter()
+    events: any
+
+    service: CalendarService
     
     viewType: string    
     selectedDay: string
@@ -70,10 +74,17 @@ export class CalendarComponent {
         this.weekdays = WEEKDAYS
         this.weekdaysShort = WEEKDAYS_SHORT
         this.center = NOW.clone()
+
+        this.events = {}
         
         this.setStuff(this.center.clone())
         this.setCalView('Week');
         this.selectedDay = ''
+
+        this.service = new CalendarService()
+
+        this.service.subscribe('event_added', this.addEvent.bind(this))
+        this.service.subscribe('modal_closed', this.modalClosed.bind(this))
     }
     
     setStuff(m) {
@@ -104,12 +115,9 @@ export class CalendarComponent {
     
     
     
-    addEvent(event) {       
-        let index = this.days.findIndex(day => day.date === event.startDate)
-        if (index === -1) {
-            return
-        }
-        this.days[index].events.push(event)
+    addEvent(event) {
+        this.events[event.startDate] = this.events[event.startDate] || []       
+        this.events[event.startDate].push(event)
     }
     
     dayClick(day, jsEvent) {
@@ -149,7 +157,9 @@ export class CalendarComponent {
     
     openModal() {                
         this.isModalOpen = true
-        this.modality.next()
+    }
+    modalClosed(data) {
+        this.isModalOpen = data.value
     }
     
 }
@@ -189,11 +199,10 @@ function MonthFactory(m) {
 
 function WeekFactory(m) {
     let startAt =   m.clone().startOf('week')
-    let days = [DayFactory(startAt.clone())];
-    
-    for (var i = 1; i < 7; i++) {
-        days.push(DayFactory(startAt.clone().add(i, 'day')));
-    }
+    let days = createArray(5).map(i => {
+        return DayFactory(startAt.clone().add((i + 1), 'day'))
+    })
+    days.unshift(DayFactory(startAt.clone()))
         
     return days;
 }
@@ -215,4 +224,13 @@ function DayFactory(m) {
         // add moment just cause
         moment: m,
     }
+}
+
+function createArray(n: number):Array<number> {
+    let arr = []
+
+    for (var index = 0; index < n; index++) {
+        arr[index] = index        
+    }
+    return arr
 }

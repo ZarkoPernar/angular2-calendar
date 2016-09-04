@@ -13,8 +13,9 @@ import CalendarService from '../calendar.service'
 export class ModalComponent {
     @Input() isOpen: boolean
     @Input() selected: string
+    @Input() service: CalendarService
     
-    @Output() eventAdded = new EventEmitter()
+    @Output() modalClosed = new EventEmitter()
     
     event: any
     
@@ -26,13 +27,25 @@ export class ModalComponent {
         }
     }
     close() {
-        this.isOpen = false
+        this.service.emit('modal_closed', {
+            value: false
+        })
+    }
+
+    addNewEvent() {
+        this.service.addNewEvent(Object.assign({}, this.event, {
+            createdAt: Date.now(),
+        }))
+        this.event.name = ''
+        this.close()
     }
     
     ngOnInit() {}
     
     ngOnChanges(changes) {
         console.log(changes);
-        
+        if (changes.selected) {
+            this.event.startDate = changes.selected.currentValue
+        }
     }
 }
