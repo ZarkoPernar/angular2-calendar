@@ -2,28 +2,28 @@ import { Component, View, Input, Output } from 'angular2/core';
 import { NgFor, NgClass, FORM_DIRECTIVES } from 'angular2/common';
 
 @Component({
-    selector: '[cal-day]',
+    selector: 'weekday',
     moduleId: module.id,
-    styleUrls: ['./day.component.css'],
+    styleUrls: ['./weekday.component.css'],
     template: `
+        <div class="day">
             <div class="day-container">
-                <span class="number">
-                    {{day.dayOfMonth}}
-                </span>
-                
-                <div class="events" [ngClass]="{'events--expanded': eventsExpanded}">
-                    <div class="event" *ngFor="#event of events" (click)="eventClick(event, $event)">
-                        <span class="event-name">{{event.name}}</span>
+                <div class="day-long">
+                    <span class="number">
+                        {{day.dayOfMonth}}
+                    </span>
+                    
+                    <div class="events" [ngClass]="{'events--expanded': eventsExpanded}">
+                        <div class="event" *ngFor="#event of events" (click)="eventClick(event, $event)">
+                            <span class="event-name">{{event.name}}</span>
+                        </div>
                     </div>
                 </div>
-
-                <button class="btn btn-block show-more" *ngIf="hasMore" [ngClass]="{hidden: eventsExpanded}" (click)="showMore($event)">
-                    Show More...
-                </button>    
             </div>
+        </div>
     `
 })
-export default class DayComponent {
+export default class WeekDayComponent {
     @Input() day: any
     @Input() events: any
     @Input() service: any

@@ -1,33 +1,23 @@
 import { Component, View, Input, Output } from 'angular2/core';
 import { NgFor, NgClass, FORM_DIRECTIVES } from 'angular2/common';
 
-@Component({
-    selector: '[cal-day]',
-    moduleId: module.id,
-    styleUrls: ['./day.component.css'],
-    template: `
-            <div class="day-container">
-                <span class="number">
-                    {{day.dayOfMonth}}
-                </span>
-                
-                <div class="events" [ngClass]="{'events--expanded': eventsExpanded}">
-                    <div class="event" *ngFor="#event of events" (click)="eventClick(event, $event)">
-                        <span class="event-name">{{event.name}}</span>
-                    </div>
-                </div>
+import CalWeekDay from '../day/weekday.component'
 
-                <button class="btn btn-block show-more" *ngIf="hasMore" [ngClass]="{hidden: eventsExpanded}" (click)="showMore($event)">
-                    Show More...
-                </button>    
-            </div>
-    `
+@Component({
+    selector: 'week',
+    moduleId: module.id,
+    styleUrls: ['./week.component.css'],
+    directives: [CalWeekDay, NgFor, NgClass, FORM_DIRECTIVES],
+    templateUrl: './week.component.html',
 })
-export default class DayComponent {
-    @Input() day: any
+
+// [ngClass]="{today: day.isToday, selected: selectedDay === day.date, inactive: day.monthName !== monthName}" 
+
+export default class WeekComponent {
+    @Input() days: any
+    @Input() weekdays: any
     @Input() events: any
     @Input() service: any
-    @Input() isSelected: boolean
 
     hasMore: boolean
     eventsExpanded: boolean

@@ -3,19 +3,25 @@
 
 <div class="container">
     <div class="toolbar">        
-        <button class="btn" (click)="openModal()">+</button>
+        <button class="btn toolbar__btn" (click)="openModal()">+</button>
         
         <div class="cal-controls">
             <button class="btn" (click)="moveCalLeft()">&larr;</button>
-            <div class="title">             
-                {{monthName}} {{center.year()}}                        
+            <div class="toolbar__title">             
+                <a (click)="toggleMonthDropdown()">{{monthName}}</a> {{center.year()}}    
             </div>
             <button class="btn" (click)="moveCalRight()">&rarr;</button>
+
+            <ul class="dropdown-menu dropdown-menu--shadow dropdown-menu--animated" [ngClass]="{'dropdown-menu--open': monthDropdownVisible}">
+                <li *ngFor="#month of months" class="menu__option">
+                    <a (click)="selectMonth(month)" class="menu__option__btn" [ngClass]="{'menu__option__btn--active': monthName === month}">{{month}}</a>
+                </li>
+            </ul>
         </div>
         
         <div class="btn-group">
-            <button class="btn" (click)="setCalView('Week')" [ngClass]="{active: viewType === 'Week'}">Week</button>
-            <button class="btn" (click)="setCalView('Month')" [ngClass]="{active: viewType === 'Month'}">Month</button>
+            <button class="btn btn-group__btn" (click)="setCalView('Week')" [ngClass]="{active: viewType === 'Week'}">Week</button>
+            <button class="btn btn-group__btn" (click)="setCalView('Month')" [ngClass]="{active: viewType === 'Month'}">Month</button>
         </div>
     </div>
     
@@ -29,21 +35,22 @@
     </div>
     <div class="weekdays-short">
         <div class="weekdays">
-            <div class="name" *ngFor="#weekday of weekdaysShort">
+            <div class="weekdays__name" *ngFor="#weekday of weekdaysShort">
                 {{weekday}}
             </div>
         </div>
     </div>
-    <div class="calendar month">        
+    <div class="calendar month" *ngIf="viewType === 'Month'">        
         <div
             cal-day 
             *ngFor="#day of days" 
             [day]="day" 
             [events]="events[day.date]" 
             class="day" 
-            [ngClass]="{today: day.isToday, selected: selectedDay === day.date}" 
+            [ngClass]="{today: day.isToday, selected: selectedDay === day.date, inactive: day.monthName !== monthName}" 
             (click)="dayClick(day, $event)" 
             #day>
         </div>
     </div>
+    <week *ngIf="viewType === 'Week'" [days]="days" [events]="events" [service]="service" [weekdays]="{short: weekdaysShort, long: weekdays}"></week>
 </div>

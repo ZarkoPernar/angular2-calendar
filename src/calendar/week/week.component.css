@@ -1,0 +1,28 @@
+.week {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+}
+
+.week__sidebar {
+    width: 100px;
+    height: 100%;
+    flex-shrink: 0;
+    background-color: #ccc;
+}
+
+.week__main {
+    height: 100%;
+    flex-grow: 1;
+}
+.week__days {
+    height: 100%;
+    flex-grow: 1;
+    display: flex;
+    align-content: stretch;
+}
+
+weekday {
+    display: block;
+    width: 100%;
+}

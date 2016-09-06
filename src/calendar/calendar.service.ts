@@ -1,4 +1,4 @@
-interface Item {
+interface CalEvent {
     name: string
     startDate: string
     endDate?: string
@@ -11,8 +11,8 @@ interface Subscribers {
 
 class CalendarService {
     subscribers: Subscribers 
-    items: Array<Item>
-    event: Item
+    items: Array<CalEvent>
+    event: CalEvent
     
     constructor() {
         this.subscribers = {
@@ -22,11 +22,11 @@ class CalendarService {
         this.items = [
             {
                 name: 'Hello!',
-                startDate: '05.09.2016'
+                startDate: '09.09.2016'
             },
             {
                 name: 'Hello Again!',
-                startDate: '06.09.2016'
+                startDate: '09.07.2016'
             }
         ]
         this.event = {
@@ -69,7 +69,7 @@ class CalendarService {
     }
 }
 
-export default CalendarService
+export {CalendarService, CalEvent}
 
 
 /**

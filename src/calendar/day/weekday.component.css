@@ -1,3 +1,10 @@
+.day {
+    flex-basis: 14.28%;
+    align-items: stretch;
+    position: relative;
+    height: 100%;
+}
+
 .day-container {
     height: 100%;
     width: 100%;
@@ -80,4 +87,7 @@
     }                  
 }
 
-
+.day-long {
+    height: 100%;
+    background-image: -webkit-repeating-linear-gradient(top,rgb(193, 193, 193) 0px,rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0) 20px, rgb(193, 193, 193) 22px);
+}

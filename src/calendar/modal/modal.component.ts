@@ -43,7 +43,6 @@ export class ModalComponent {
     ngOnInit() {}
     
     ngOnChanges(changes) {
-        console.log(changes);
         if (changes.selected) {
             this.event.startDate = changes.selected.currentValue
         }

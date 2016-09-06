@@ -2,8 +2,9 @@ import { Component, View, EventEmitter } from 'angular2/core';
 import { NgFor, NgClass, FORM_DIRECTIVES } from 'angular2/common';
 
 import {ModalComponent} from './modal/modal.component';
-import CalendarService from './calendar.service'
+import {CalendarService, CalEvent} from './calendar.service'
 import CalDay from './day/day.component'
+import CalWeek from './week/week.component'
 
 const moment = require('moment/moment');
 
@@ -16,47 +17,30 @@ const WEEKDAYS_MIN = moment.weekdaysMin()
 
 const getWeekNumber = m => Math.ceil(m.date() / 7)
 const getMonthName = m => MONTHS[m.month()]
-const TOTAL_DAYS_MONTH = 35;
-
-
-let events = [
-    {
-        name: 'Hello!',
-        startDate: '09.10.2016'
-    },
-    {
-        name: 'Hello Again!',
-        startDate: '09.08.2016'
-    }
-]
-    
-interface CalEvent {
-    name: string
-    startDate: string
-} 
 
 interface DAY {
     dayOfMonth: number
     dayOfWeek: string
     moment: any
     date: string
-    events: Array<CalEvent>
 }
 
 @Component({
   selector: 'my-calendar',
   moduleId: module.id,
-//   styleUrls: ['./calendar.component.css'],
+  styleUrls: ['./calendar.component.css'],
   templateUrl: './calendar.component.html',
-  directives: [CalDay, ModalComponent, NgFor, NgClass, FORM_DIRECTIVES],
+  directives: [CalDay, CalWeek, ModalComponent, NgFor, NgClass, FORM_DIRECTIVES],
 })
 
 export class CalendarComponent {
     days: Array<DAY>
     weekdays: Array<string>
     weekdaysShort: Array<string>
+    months: Array<string>
     newEvent: CalEvent
     isModalOpen: boolean
+    monthDropdownVisible: boolean
     modality = new EventEmitter()
     events: any
 
@@ -68,11 +52,13 @@ export class CalendarComponent {
     weekNumber: number
     center: any
         
-    constructor() {                    
+    constructor() {   
+        this.service = new CalendarService()      
                        
         this.monthName = getMonthName(NOW)                  
         this.weekdays = WEEKDAYS
         this.weekdaysShort = WEEKDAYS_SHORT
+        this.months = MONTHS
         this.center = NOW.clone()
 
         this.events = {}
@@ -81,19 +67,20 @@ export class CalendarComponent {
         this.setCalView('Week');
         this.selectedDay = ''
 
-        this.service = new CalendarService()
+        this.addEvents()
 
         this.service.subscribe('event_added', this.addEvent.bind(this))
         this.service.subscribe('modal_closed', this.modalClosed.bind(this))
+
+        this.monthDropdownVisible = false
     }
     
     setStuff(m) {
         this.center = m
         this.monthName = getMonthName(m)
         this.weekNumber = getWeekNumber(m)
+        this.build()
     }
-    
-    
     
     build() {
         if (this.viewType === 'Week') {
@@ -101,24 +88,36 @@ export class CalendarComponent {
         } else {
             this.days = MonthFactory(this.center); 
         }
-        this.addEvents()
     }
     
     addEvents() {
-        events.forEach(event => this.addEvent(event))
+        this.service.items.forEach(event => this.addEvent(event))
+    }
+
+    addEvent(event) {
+        if (!this.events[event.startDate]) {
+            this.events[event.startDate] = [event]
+        } else {
+            this.events[event.startDate] = this.events[event.startDate].concat([event])
+        }
     }
     
     setCalView(type) {        
         this.viewType = type;
         this.build()
     }
-    
-    
-    
-    addEvent(event) {
-        this.events[event.startDate] = this.events[event.startDate] || []       
-        this.events[event.startDate].push(event)
+
+    toggleMonthDropdown() {
+        this.monthDropdownVisible = !this.monthDropdownVisible
     }
+
+    selectMonth(month) {
+        let m = moment().month(month)
+        this.monthDropdownVisible = false
+        this.setStuff(m)
+    }
+    
+    
     
     dayClick(day, jsEvent) {
         if (day.date === this.selectedDay) {
@@ -130,7 +129,7 @@ export class CalendarComponent {
     
     eventClick(event, jsEvent) {
         jsEvent.stopPropagation()
-        console.log(event);        
+        console.log(event)
     }
     
     moveCalLeft() {
@@ -141,7 +140,6 @@ export class CalendarComponent {
             newM = this.center.clone().subtract(1, 'months')
         }
         this.setStuff(newM)
-        this.build()
     }
     
     moveCalRight() {
@@ -152,7 +150,6 @@ export class CalendarComponent {
             newM = this.center.clone().add(1, 'months')
         }
         this.setStuff(newM)
-        this.build()
     }
     
     openModal() {                
@@ -169,14 +166,16 @@ function MonthFactory(m) {
     let endAt = m.clone().endOf('month')
     
     let monthTotal = endAt.date()
-    let remain = TOTAL_DAYS_MONTH - monthTotal;
     let days = [DayFactory(startAt.clone())];
-    let insertFront = remain ? days[0].dayOfWeek : 0;
-    let insertBack = remain ? remain - insertFront : 0;           
+    let insertFront = days[0].dayOfWeek
+    let insertBack
         
     for (var i = 1; i < monthTotal; i++) {
         days.push(DayFactory(startAt.clone().add(i, 'day')));
     }
+
+    // after month is generated get last day
+    insertBack = 6 - days[days.length - 1].dayOfWeek
         
     if (insertFront) {
         let i;
@@ -199,7 +198,7 @@ function MonthFactory(m) {
 
 function WeekFactory(m) {
     let startAt =   m.clone().startOf('week')
-    let days = createArray(5).map(i => {
+    let days = createArray(6).map(i => {
         return DayFactory(startAt.clone().add((i + 1), 'day'))
     })
     days.unshift(DayFactory(startAt.clone()))
@@ -210,17 +209,19 @@ function WeekFactory(m) {
 function DayFactory(m) {
     let dayOfMonth = m.date(),
         dayOfWeek = m.weekday(),
+        month = m.month(),
+        monthName = MONTHS[month],
         date = m.format('MM.DD.YYYY'),
         weekday = moment.weekdays(dayOfWeek);
         
     return {
-        dayOfMonth: dayOfMonth, 
-        dayOfWeek: dayOfWeek,
-        weekday: weekday,
-        date: date,
-        isToday: NOW.isSame(m, 'day'),
-        events: [],
-        
+        dayOfMonth, 
+        dayOfWeek,
+        weekday,
+        date,
+        month,
+        monthName,        
+        isToday: NOW.isSame(m, 'day'),        
         // add moment just cause
         moment: m,
     }
