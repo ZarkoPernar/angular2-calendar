@@ -3,13 +3,17 @@
     align-items: stretch;
     position: relative;
     height: 100%;
+    border: 1px solid #e1e1e1;
+    border-left: 0;
+    border-bottom: 0;
 }
 
 .day-container {
     height: 100%;
     width: 100%;
     position: absolute;
-    padding: 25px 2px;
+    padding: 0;
+    padding-top: 24px;
     border: 1px solid #eee;
     border-radius: 2px;
 }
@@ -29,24 +33,6 @@
     overflow: hidden;
     z-index: 2;
 }
-.events--expanded {
-    background-color: #fff;
-    overflow: visible;
-}
-
-.show-more {
-    position: absolute;
-    background-color: #999;
-    bottom: 2px;
-    left: 2px;
-    width: calc(100% - 4px);
-    padding: 2px;
-    height: 20px;
-    font-size: 12px;
-}
-.show-more.hidden {
-    display: none;
-}
 
 .event {
     font-size: 12px;
@@ -54,9 +40,9 @@
     width: 8px;
     height: 8px;
     border-radius: 8px;
-    background-color: dodgerblue;   
     margin-bottom: 3px;
     cursor: pointer; 
+    position: absolute;
 }
 
 .event-name {
@@ -65,19 +51,24 @@
 
 @media (min-width: 768px) {
 
-    .month .day .events {
+    .events {
         display: block;
     }
-    .month .day .events .event {
+    .event {
         width: 100%;
-        height: auto;
-        border-radius: 5px;
-        padding: 3px 6px;
+        height: 2.083333%;
+        padding: 0;
+        border-radius: 0;
         border-radius: 1px;
-        margin-bottom: 3px;
+        margin-bottom: 0;
     }
-    .event .event-name {
-        display: inline;
+    .event-name {
+        display: block;
+        border-radius: 0;
+        height: calc(100% - 1px);
+        padding: 3px 6px;
+        font-size: 11px;
+        background-color: dodgerblue; 
     }
 }
 
@@ -88,6 +79,11 @@
 }
 
 .day-long {
+    border-top: 1px solid #e1e1e1;
     height: 100%;
-    background-image: -webkit-repeating-linear-gradient(top,rgb(193, 193, 193) 0px,rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0) 20px, rgb(193, 193, 193) 22px);
+    background-image: -webkit-repeating-linear-gradient(top, 
+    #fff,
+    #fff calc(4.16666666667% - 1px),
+    #e1e1e1 calc(4.16666666667% - 1px),
+    #e1e1e1 4.16666666667%);
 }

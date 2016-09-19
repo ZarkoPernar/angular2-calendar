@@ -75,28 +75,26 @@
 .weekdays {
     display: flex;
     flex-direction: row;   
-    border-top: 1px solid #ccc;
-    border-left: 1px solid #ccc;
-    background-color: #f1f1f1;
 }
 .weekdays__name {
     font-size: 14px;
     flex-grow: 1;
     flex-shrink: 0;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #e1e1e1;
     border-top: 0;
     border-left: 0;
     flex-basis: 14.28%;
 }
 
 .calendar.month {
-    height: calc(100% - 120px);
+    height: 660px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    border-top: 1px solid #ccc;
-    border-left: 1px solid #ccc;
+    border: 1px solid rgba(134, 134, 134, 0.36);
+    border-right: 0;
+    border-bottom: 0;
 }
 
 @media (min-width: 768px) {

@@ -26,30 +26,33 @@
     </div>
     
     <p></p>
-    <div class="weekdays-long">
-        <div class="weekdays">
-            <div class="name" *ngFor="#weekday of weekdays">
-                {{weekday}}
+    
+    <div *ngIf="viewType === 'Month'">    
+        <div class="weekdays-long">
+            <div class="weekdays">
+                <div class="name" *ngFor="#weekday of weekdays">
+                    {{weekday}}
+                </div>
             </div>
         </div>
-    </div>
-    <div class="weekdays-short">
-        <div class="weekdays">
-            <div class="weekdays__name" *ngFor="#weekday of weekdaysShort">
-                {{weekday}}
+        <div class="weekdays-short">
+            <div class="weekdays">
+                <div class="weekdays__name" *ngFor="#weekday of weekdaysShort">
+                    {{weekday}}
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="calendar month" *ngIf="viewType === 'Month'">        
-        <div
-            cal-day 
-            *ngFor="#day of days" 
-            [day]="day" 
-            [events]="events[day.date]" 
-            class="day" 
-            [ngClass]="{today: day.isToday, selected: selectedDay === day.date, inactive: day.monthName !== monthName}" 
-            (click)="dayClick(day, $event)" 
-            #day>
+        </div>    
+        <div class="calendar month">
+            <div
+                cal-day 
+                *ngFor="#day of days" 
+                [day]="day" 
+                [events]="events[day.date]" 
+                class="day" 
+                [ngClass]="{today: day.isToday, selected: selectedDay === day.date, inactive: day.monthName !== monthName}" 
+                (click)="dayClick(day, $event)" 
+                #day>
+            </div>
         </div>
     </div>
     <week *ngIf="viewType === 'Week'" [days]="days" [events]="events" [service]="service" [weekdays]="{short: weekdaysShort, long: weekdays}"></week>

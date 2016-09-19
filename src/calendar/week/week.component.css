@@ -1,19 +1,77 @@
 .week {
-    display: flex;
-    align-items: stretch;
-    height: 100%;
+    
 }
 
-.week__sidebar {
-    width: 100px;
-    height: 100%;
+.week__top {
+    display: flex;
+}
+.week__corner {
+    width: 60px;
     flex-shrink: 0;
-    background-color: #ccc;
+    height: 41px;
+    background-color: #f9f9f9;
+    border: 1px solid #e1e1e1;
+    border-right: 0;
+}
+.weekdays__container {
+    flex-grow: 1;
+    width: calc(100% - 60px);
+}
+
+.weekdays {
+    padding-right: 17px;
+}
+
+.week__scroll {
+    display: flex;
+    height: 715px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+/*.week__scroll::-webkit-scrollbar {
+    width: 17px;
+}
+ 
+.week__scroll::-webkit-scrollbar-track {
+
+}
+ 
+.week__scroll::-webkit-scrollbar-thumb {
+  background-color: #e1e1e1;
+  outline: 1px solid ccc;
+}*/
+
+.week__sidebar {
+    width: 60px;
+    flex-shrink: 0;
+    height: 1010px;
+    background-color: #f9f9f9;
+}
+
+.sidebar__hours {
+    height: 1010px;
+    padding-top: 25px; 
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e1e1e1;
+    border-top: 0;
+}
+
+.sidebar__hours__hour {
+    flex-grow: 1;
+    padding: 2px;
+    text-align: right;
+    border-top: 1px solid #e1e1e1;
+    font-size: 12px;
 }
 
 .week__main {
-    height: 100%;
-    flex-grow: 1;
+    height: 1010px;
+    width: 100%;
+    display: flex;
+    align-items: stretch;
 }
 .week__days {
     height: 100%;

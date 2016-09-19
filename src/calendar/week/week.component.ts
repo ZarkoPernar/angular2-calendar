@@ -3,6 +3,12 @@ import { NgFor, NgClass, FORM_DIRECTIVES } from 'angular2/common';
 
 import CalWeekDay from '../day/weekday.component'
 
+const moment = require('moment/moment');
+
+interface SideHour {
+    display: string,
+}
+
 @Component({
     selector: 'week',
     moduleId: module.id,
@@ -21,10 +27,14 @@ export default class WeekComponent {
 
     hasMore: boolean
     eventsExpanded: boolean
+    hours: Array<SideHour>
     
     constructor() {
         this.hasMore = false
         this.eventsExpanded = false
+        
+        this.hours = createHours()
+
         this.showLess = this.showLess.bind(this)
     }   
 
@@ -50,4 +60,19 @@ export default class WeekComponent {
             this.hasMore = true
         }
     }
+}
+
+function createHours():Array<any> {    
+    let temp = moment().startOf('day')
+    let arr = [{
+        display: temp.format('HH:mm')
+    }]
+
+    for (let i = 0; i < 23; i++) {
+        arr.push({
+            display: temp.add(1, 'hour').format('HH:mm'),
+        })
+    }
+
+    return arr
 }

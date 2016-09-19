@@ -1,31 +1,40 @@
 
 <div class="week">
-    <div class="week__sidebar"></div>
-    <div class="week__main">
-        <div class="week_top">
-            <div class="weekdays-long">
-                <div class="weekdays">
-                    <div class="name" *ngFor="#weekday of weekdays.long">
-                        {{weekday}}
-                    </div>
+    <div class="week__top">
+        <div class="week__corner"></div>
+        <div class="weekdays__container">
+            <div class="weekdays weekdays--long">
+                <div class="name" *ngFor="#weekday of weekdays.long">
+                    {{weekday}}
                 </div>
             </div>
-            <div class="weekdays-short">
-                <div class="weekdays">
-                    <div class="weekdays__name" *ngFor="#weekday of weekdays.short">
-                        {{weekday}}
-                    </div>
+            <div class="weekdays weekdays--short">
+                <div class="weekdays__name" *ngFor="#weekday of weekdays.short">
+                    {{weekday}}
                 </div>
             </div>
-        </div>
-        <div class="week__days">
-            <weekday 
-                *ngFor="#day of days" 
-                [day]="day" 
-                [events]="events[day.date]"                     
-                (click)="dayClick(day, $event)" 
-                #day>
-            </weekday>
         </div>
     </div>
+    <div class="week__scroll">
+        <div class="week__sidebar">
+            <div class="sidebar__hours">
+                <div class="sidebar__hours__hour" *ngFor="#hour of hours">
+                    {{hour.display}}
+                </div>
+            </div>
+        </div>
+        <div class="week__main">
+            
+            <div class="week__days">
+                <weekday 
+                    *ngFor="#day of days" 
+                    [day]="day" 
+                    [events]="events[day.date]"                     
+                    (click)="dayClick(day, $event)" 
+                    #day>
+                </weekday>
+            </div>
+        </div>
+    </div>
+        
 </div>

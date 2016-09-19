@@ -14,7 +14,8 @@ import { NgFor, NgClass, FORM_DIRECTIVES } from 'angular2/common';
                     </span>
                     
                     <div class="events" [ngClass]="{'events--expanded': eventsExpanded}">
-                        <div class="event" *ngFor="#event of events" (click)="eventClick(event, $event)">
+                        <div class="event" *ngFor="#event of events" (click)="eventClick(event, $event)" 
+                            [ngStyle]="{height: (event.duration * 2.083333) + '%', top: (getTop(event) * 2.083333) + '%'}">
                             <span class="event-name">{{event.name}}</span>
                         </div>
                     </div>
@@ -41,6 +42,12 @@ export default class WeekDayComponent {
     dayClick(day, $event) {
 
     } 
+
+    getTop(event) {
+        let hrs = event.startTime.hours()
+           
+        return hrs
+    }
 
     eventClick(day, $event) {
         $event.stopPropagation()
