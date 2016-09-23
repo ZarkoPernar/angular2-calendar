@@ -4,18 +4,18 @@
         <div class="week__corner"></div>
         <div class="weekdays__container">
             <div class="weekdays weekdays--long">
-                <div class="name" *ngFor="#weekday of weekdays.long">
-                    {{weekday}}
+                <div class="name weekdays__name" *ngFor="#day of days">
+                    {{day.weekday}} <span class="weekdays__short-date">{{day.shortDate}}</span>  
                 </div>
             </div>
             <div class="weekdays weekdays--short">
-                <div class="weekdays__name" *ngFor="#weekday of weekdays.short">
-                    {{weekday}}
+                <div class="name weekdays__name" *ngFor="#day of days">
+                    {{day.weekday}} <span class="weekdays__short-date">{{day.shortDate}}</span>  
                 </div>
             </div>
         </div>
     </div>
-    <div class="week__scroll">
+    <div class="week__scroll" #weekScroll>
         <div class="week__sidebar">
             <div class="sidebar__hours">
                 <div class="sidebar__hours__hour" *ngFor="#hour of hours">
@@ -28,7 +28,8 @@
             <div class="week__days">
                 <weekday 
                     *ngFor="#day of days" 
-                    [day]="day" 
+                    [day]="day"
+                    [scrollTop]="scrollTop" 
                     [events]="events[day.date]"                     
                     (click)="dayClick(day, $event)" 
                     #day>

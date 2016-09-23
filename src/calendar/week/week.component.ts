@@ -1,4 +1,4 @@
-import { Component, View, Input, Output } from 'angular2/core';
+import { Component, View, Input, Output, ElementRef, ViewChild } from 'angular2/core';
 import { NgFor, NgClass, FORM_DIRECTIVES } from 'angular2/common';
 
 import CalWeekDay from '../day/weekday.component'
@@ -25,18 +25,27 @@ export default class WeekComponent {
     @Input() events: any
     @Input() service: any
 
+    @ViewChild('weekScroll') scroll
+
     hasMore: boolean
     eventsExpanded: boolean
+    scrollTop: number = 0
     hours: Array<SideHour>
     
-    constructor() {
+    constructor(public el: ElementRef) {
         this.hasMore = false
         this.eventsExpanded = false
         
         this.hours = createHours()
 
         this.showLess = this.showLess.bind(this)
-    }   
+    } 
+
+    ngAfterViewInit() {
+        this.scroll.nativeElement.addEventListener('scroll', (e) => {
+            this.scrollTop = e.target.scrollTop
+        })        
+    }
 
     dayClick(day, $event) {
 

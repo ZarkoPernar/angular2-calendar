@@ -6,7 +6,7 @@
     display: flex;
 }
 .week__corner {
-    width: 60px;
+    width: 59px;
     flex-shrink: 0;
     height: 41px;
     background-color: #f9f9f9;
@@ -44,14 +44,14 @@
 
 .week__sidebar {
     width: 60px;
+    height: 1033px;
     flex-shrink: 0;
-    height: 1010px;
     background-color: #f9f9f9;
 }
 
 .sidebar__hours {
-    height: 1010px;
-    padding-top: 25px; 
+    height: 100%;
+    padding-top: 24px; 
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -84,3 +84,15 @@ weekday {
     display: block;
     width: 100%;
 }
+.weekdays__name {
+    text-align: center;
+}
+/*.weekdays__name:after {
+    content: '';
+    clear: both;
+    display: block;
+    width: 100%;
+}
+.weekdays__short-date {
+    float: right;
+}*/

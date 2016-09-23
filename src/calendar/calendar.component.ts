@@ -35,8 +35,7 @@ interface DAY {
 
 export class CalendarComponent {
     days: Array<DAY>
-    weekdays: Array<string>
-    weekdaysShort: Array<string>
+    weekdays: any
     months: Array<string>
     newEvent: CalEvent
     isModalOpen: boolean
@@ -56,8 +55,10 @@ export class CalendarComponent {
         this.service = new CalendarService()      
                        
         this.monthName = getMonthName(NOW)                  
-        this.weekdays = WEEKDAYS
-        this.weekdaysShort = WEEKDAYS_SHORT
+        this.weekdays = {
+            long: WEEKDAYS,
+            short: WEEKDAYS_SHORT,
+        }
         this.months = MONTHS
         this.center = NOW.clone()
 
@@ -207,20 +208,15 @@ function WeekFactory(m) {
 }
 
 function DayFactory(m) {
-    let dayOfMonth = m.date(),
-        dayOfWeek = m.weekday(),
-        month = m.month(),
-        monthName = MONTHS[month],
-        date = m.format('MM.DD.YYYY'),
-        weekday = moment.weekdays(dayOfWeek);
         
     return {
-        dayOfMonth, 
-        dayOfWeek,
-        weekday,
-        date,
-        month,
-        monthName,        
+        dayOfMonth: m.date(), 
+        dayOfWeek: m.weekday(),
+        weekday: WEEKDAYS_SHORT[m.weekday()],
+        date: m.format('MM.DD.YYYY'),
+        shortDate: m.format('M/DD'),
+        month: m.month(),
+        monthName: MONTHS[m.month()],        
         isToday: NOW.isSame(m, 'day'),        
         // add moment just cause
         moment: m,

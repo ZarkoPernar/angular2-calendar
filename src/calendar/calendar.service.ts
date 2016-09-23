@@ -7,6 +7,8 @@ interface CalEvent {
     createdAt?: number
     duration?: number
     startTime?: any
+    offsetY?: number
+    height?: number
 }
 
 interface Subscribers {

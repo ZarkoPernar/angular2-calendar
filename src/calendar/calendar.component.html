@@ -30,14 +30,14 @@
     <div *ngIf="viewType === 'Month'">    
         <div class="weekdays-long">
             <div class="weekdays">
-                <div class="name" *ngFor="#weekday of weekdays">
+                <div class="name" *ngFor="#weekday of weekdays.long">
                     {{weekday}}
                 </div>
             </div>
         </div>
         <div class="weekdays-short">
             <div class="weekdays">
-                <div class="weekdays__name" *ngFor="#weekday of weekdaysShort">
+                <div class="weekdays__name" *ngFor="#weekday of weekdays.short">
                     {{weekday}}
                 </div>
             </div>
@@ -55,5 +55,5 @@
             </div>
         </div>
     </div>
-    <week *ngIf="viewType === 'Week'" [days]="days" [events]="events" [service]="service" [weekdays]="{short: weekdaysShort, long: weekdays}"></week>
+    <week *ngIf="viewType === 'Week'" [days]="days" [events]="events" [service]="service" [weekdays]="weekdays"></week>
 </div>
