@@ -1,0 +1,40 @@
+
+<div class="week">
+    <div class="week__top">
+        <div class="week__corner"></div>
+        <div class="weekdays__container">
+            <div class="weekdays weekdays--long">
+                <div class="name weekdays__name" *ngFor="let day of days">
+                    {{day.weekday}} <span class="weekdays__short-date">{{day.shortDate}}</span>  
+                </div>
+            </div>
+            <div class="weekdays weekdays--short">
+                <div class="name weekdays__name" *ngFor="let day of days">
+                    {{day.weekday}} <span class="weekdays__short-date">{{day.shortDate}}</span>  
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="week__scroll" #weekScroll>
+        <div class="week__sidebar">
+            <div class="sidebar__hours">
+                <div class="sidebar__hours__hour" *ngFor="let hour of hours">
+                    {{hour.display}}
+                </div>
+            </div>
+        </div>
+        <div class="week__main">
+            
+            <div class="week__days">
+                <weekday 
+                    *ngFor="let day of days" 
+                    [day]="day"
+                    [scrollTop]="scrollTop" 
+                    [events]="events[day.date]"                     
+                    (click)="dayClick(day, $event)">
+                </weekday>
+            </div>
+        </div>
+    </div>
+        
+</div>
