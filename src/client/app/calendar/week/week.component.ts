@@ -1,7 +1,7 @@
 import { Component, Input, Output, ElementRef, ViewChild } from '@angular/core';
 import { NgFor, NgClass } from '@angular/common';
 
-import CalWeekDay from '../day/weekday.component'
+import DragService from '../week/dragService'
 
 const moment = require('moment/moment');
 
@@ -13,8 +13,8 @@ interface SideHour {
     selector: 'week',
     moduleId: module.id,
     styleUrls: ['./week.component.css'],
-    directives: [CalWeekDay],
     templateUrl: './week.component.html',
+    providers: [DragService],
 })
 
 // [ngClass]="{today: day.isToday, selected: selectedDay === day.date, inactive: day.monthName !== monthName}" 

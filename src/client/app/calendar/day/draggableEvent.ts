@@ -1,8 +1,11 @@
 import { Component, Directive, Input, Output, ElementRef, EventEmitter } from '@angular/core';
 
-interface Hold {
-    isHolding?: boolean
+// bottom part of the event that is clicked for resize
+const resizeTargetHeight: number = 5
+
+export interface Hold {
     mouseOffset?: number
+    resize?: boolean
 }
 
 @Directive({
@@ -12,36 +15,35 @@ interface Hold {
 export default class DraggableEvent {
     @Output() drag: EventEmitter<Hold> = new EventEmitter()
     hold: Hold
+    resize: boolean = false
 
     constructor(public el: ElementRef) {
         // console.log(el)
 
         this.mouseDown = this.mouseDown.bind(this)
-        this.mouseUp = this.mouseUp.bind(this)
-
-        window.addEventListener('mouseup', this.mouseUp)
         this.el.nativeElement.addEventListener('mousedown', this.mouseDown)
 
     }   
 
     ngOnDestroy() {
-        window.removeEventListener('mouseup', this.mouseUp)
         this.el.nativeElement.removeEventListener('mousedown', this.mouseDown)
     }
 
-    mouseDown(e) {
-        // console.log(e)
-        e.preventDefault()
-        this.hold = {
-            isHolding: true,
-            mouseOffset: e.offsetY,
-        }
-        this.drag.emit(this.hold)
+    didClickOnResize(e: MouseEvent): boolean {
+        return e.offsetY > (e.target.clientHeight - resizeTargetHeight)
     }
-    mouseUp(e) {
+
+    mouseDown(e: MouseEvent) {
+        
+        this.resize = this.didClickOnResize(e)
+ 
+        e.preventDefault()
+        
         this.hold = {
-            isHolding: false,
-        }
+            mouseOffset: e.offsetY,
+            resize: this.resize,
+        }        
+
         this.drag.emit(this.hold)
     }
 }

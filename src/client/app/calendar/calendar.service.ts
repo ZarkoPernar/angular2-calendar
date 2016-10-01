@@ -3,10 +3,12 @@ const moment = require('moment/moment');
 interface CalEvent {
     name: string
     startDate: string
+    timeStart?: string
     endDate?: string
     createdAt?: number
     duration?: number
     startTime?: any
+    endTime?: any
     offsetY?: number
     height?: number
 }
@@ -29,23 +31,29 @@ class CalendarService {
             {
                 name: 'Hello!',
                 startDate: '09.20.2016',
-                startTime: moment('09.21.2016. 10:00', 'MM.DD.YYYY. HH:mm'),
+                startTime: moment('09.27.2016. 10:00', 'MM.DD.YYYY. HH:mm'),
+                timeStart: moment('09.27.2016. 10:00', 'MM.DD.YYYY. HH:mm').format('hh:mm a'),
             },
             {
                 name: 'Hello Again!',
-                startDate: '09.21.2016',
+                startDate: '09.28.2016',
                 duration: 2,
-                startTime: moment('09.21.2016. 12:00', 'MM.DD.YYYY. HH:mm'),
+                startTime: moment('09.28.2016. 12:00', 'MM.DD.YYYY. HH:mm'),
+                timeStart: moment('09.28.2016. 12:00', 'MM.DD.YYYY. HH:mm').format('hh:mm a'),
+                
             },
             {
                 name: 'Hello There!',
-                startDate: '09.21.2016',
-                startTime: moment('09.21.2016. 07:00', 'MM.DD.YYYY. HH:mm'),
+                startDate: '09.29.2016',
+                startTime: moment('09.29.2016. 07:00', 'MM.DD.YYYY. HH:mm'),
+                timeStart: moment('09.29.2016. 07:00', 'MM.DD.YYYY. HH:mm').format('hh:mm a'),
+                
             },
             {
                 name: 'Hello Michael!',
-                startDate: '09.21.2016',
-                startTime: moment('09.21.2016. 06:00', 'MM.DD.YYYY. HH:mm'),
+                startDate: '09.29.2016',
+                startTime: moment('09.29.2016. 07:30', 'MM.DD.YYYY. HH:mm'),
+                timeStart: moment('09.29.2016. 07:30', 'MM.DD.YYYY. HH:mm').format('hh:mm a'),
             }
         ]
         this.event = {
