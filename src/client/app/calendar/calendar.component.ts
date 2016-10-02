@@ -1,4 +1,4 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, ChangeDetectionStrategy, Input } from '@angular/core';
 import { NgFor, NgClass } from '@angular/common';
 
 
@@ -17,11 +17,15 @@ const WEEKDAYS_MIN = moment.weekdaysMin()
 const getWeekNumber = m => Math.ceil(m.date() / 7)
 const getMonthName = m => MONTHS[m.month()]
 
-interface DAY {
+export interface DAY {
     dayOfMonth: number
     dayOfWeek: string
     moment: any
     date: string
+}
+
+export interface CalendarSettings {
+
 }
 
 @Component({
@@ -29,9 +33,13 @@ interface DAY {
   moduleId: module.id,
   styleUrls: ['./calendar.component.css'],
   templateUrl: './calendar.component.html',
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 
 export class CalendarComponent {
+    @Input() importEvents: Array<CalEvent>
+    @Input() settings: CalendarSettings
+
     days: Array<DAY>
     weekdays: any
     months: Array<string>
@@ -93,7 +101,7 @@ export class CalendarComponent {
         this.service.items.forEach(event => this.addEvent(event))
     }
 
-    addEvent(event) {
+    addEvent(event: CalEvent) {
         if (!this.events[event.startDate]) {
             this.events[event.startDate] = [event]
         } else {
@@ -101,20 +109,27 @@ export class CalendarComponent {
         }
     }
     
-    setCalView(type) {        
+    setCalView(type: string) {        
         this.viewType = type;
         this.build()
     }
 
     centerToday(): void {
-        this.setStuff(moment())
+        let day = moment()
+        // check if needs re-render
+        if (this.viewType === 'Month' && !this.center.isSame(day, 'month')) {
+            this.setStuff(day)
+        } else if (this.viewType === 'Week' && !this.center.isSame(day, 'week')) {
+            this.setStuff(day)
+        }
+        this.selectedDay = this.center.format('MM.DD.YYYY')     
     }
 
     toggleMonthDropdown() {
         this.monthDropdownVisible = !this.monthDropdownVisible
     }
 
-    selectMonth(month) {
+    selectMonth(month: string) {
         let m = this.center.clone().month(month)
         this.monthDropdownVisible = false
         this.setStuff(m)
@@ -122,7 +137,7 @@ export class CalendarComponent {
     
     
     
-    dayClick(day, jsEvent) {
+    dayClick(day, jsEvent: MouseEvent) {
         if (day.date === this.selectedDay) {
             this.selectedDay = ''     
         } else {
@@ -130,13 +145,13 @@ export class CalendarComponent {
         }          
     }
     
-    eventClick(event, jsEvent) {
+    eventClick(event: CalEvent, jsEvent: MouseEvent) {
         jsEvent.stopPropagation()
         console.log(event)
     }
     
     moveCalLeft() {
-        let newM;
+        let newM
         if (this.viewType === 'Week') {
             newM = this.center.clone().subtract(1, 'weeks')
         } else {
@@ -146,7 +161,7 @@ export class CalendarComponent {
     }
     
     moveCalRight() {
-        let newM;
+        let newM
         if (this.viewType === 'Week') {
             newM = this.center.clone().add(1, 'weeks')
         } else {
@@ -158,7 +173,7 @@ export class CalendarComponent {
     openModal() {                
         this.isModalOpen = true
     }
-    modalClosed(data) {
+    modalClosed(data: any) {
         this.isModalOpen = data.value
     }
     
@@ -171,7 +186,7 @@ function MonthFactory(m) {
     let monthTotal = endAt.date()
     let days = [DayFactory(startAt.clone())];
     let insertFront = days[0].dayOfWeek
-    let insertBack
+    let insertBack: number
         
     for (var i = 1; i < monthTotal; i++) {
         days.push(DayFactory(startAt.clone().add(i, 'day')));
@@ -181,7 +196,7 @@ function MonthFactory(m) {
     insertBack = 6 - days[days.length - 1].dayOfWeek
         
     if (insertFront) {
-        let i;
+        let i: number
         for (i = 1; i <= insertFront; i++) {            
             let momento = startAt.clone().subtract(i, 'day')
             days.unshift(DayFactory(momento));
@@ -189,7 +204,7 @@ function MonthFactory(m) {
     }
         
     if (insertBack) {
-        let i;
+        let i: number
         for (i = 1; i <= insertBack; i++) {
             let momento = endAt.clone().add(i, 'day')
             days.push(DayFactory(momento));

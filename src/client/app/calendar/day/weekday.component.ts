@@ -1,23 +1,29 @@
 import { Component, Input, Output, ElementRef, ChangeDetectionStrategy, SimpleChanges } from '@angular/core';
 
+import { DAY } from '../calendar.component'
 import { CalEvent } from '../calendar.service'
 import { Hold } from './draggableEvent'
+
+interface OverlapEvent {
+    
+}
 
 @Component({
     selector: 'weekday',
     moduleId: module.id,
     styleUrls: ['./weekday.component.css'],
     templateUrl: './weekday.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.Default,
 })
 
 export default class WeekDayComponent {
     @Input() scrollTop: number
-    @Input() day: any
-    @Input() events: any
+    @Input() day: DAY
+    @Input() events: [CalEvent]
     @Input() service: any
     @Input() isSelected: boolean
 
+    overlapEvents: {}
     moveIncrement: number
     mouseOffset: number = 0
     containerTop: number
@@ -37,15 +43,13 @@ export default class WeekDayComponent {
 
     ngAfterContentInit() {
         this.containerTop = this.el.nativeElement.getBoundingClientRect().top
-        this.moveIncrement = parseInt(this.el.nativeElement.clientHeight / 48)              
+        this.moveIncrement = parseInt(this.el.nativeElement.clientHeight / 48)    
+        this.transformEvents(this.events)          
     }
 
-    ngOnChanges(changes: SimpleChanges) {
-        console.log(changes)
-        if (changes.events && changes.events.currentValue) {
-            changes.events.currentValue.forEach((event: CalEvent, i: number) => {
-                this.transformEvent(event)
-            })
+    ngOnChanges({ events }: SimpleChanges) {
+        if (events) {
+            this.transformEvents(events.currentValue)
         }  
     }
 
@@ -57,6 +61,37 @@ export default class WeekDayComponent {
     transformEvent(item: CalEvent) {
         item.offsetY = this.getTop(item) * (this.moveIncrement || 0)
         item.height = (item.duration * this.moveIncrement)
+
+        this.findOverlap(this.events)
+    }
+
+    transformEvents(events: Array<CalEvent>) {
+        if (events && events.length) {
+            events.forEach((event: CalEvent, i: number) => {
+                this.transformEvent(event)
+            })
+        }
+    }
+
+    findOverlap(events: [CalEvent]) {
+        this.overlapEvents = {}
+        events.forEach((a: CalEvent) => {
+            events.forEach((b: CalEvent) => {
+                if (a.offsetY > b.offsetY && a.offsetY < (b.offsetY + b.height)) {
+                    a.width = 50
+                    b.width = 50
+                    b.left = 100
+                } else if (b.offsetY > a.offsetY && b.offsetY < (a.offsetY + a.height)) {
+                    a.width = 50
+                    b.width = 50
+                    b.left = 100
+                } else {
+                    a.width = 100
+                    b.width = 100
+                    b.left = 0
+                }
+            })
+        })
     }
 
     mouseUp() {
@@ -148,9 +183,11 @@ export default class WeekDayComponent {
         } else {
             item.endTime = item.startTime.clone().add('hours', inc / 2)
         }
+
+        this.findOverlap(this.events)
     }
 
-    dayClick(day, $event) {
+    dayClick(day: DAY, $event: MouseEvent) {
 
     } 
 
@@ -161,7 +198,7 @@ export default class WeekDayComponent {
         return (hrs + pts) * 2
     }
 
-    eventClick(day, $event) {
+    eventClick(day: DAY, $event: MouseEvent) {
         $event.stopPropagation()
     }
 }

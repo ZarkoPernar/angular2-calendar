@@ -1,7 +1,7 @@
 import { Component, Input, Output, ElementRef, ViewChild } from '@angular/core';
 import { NgFor, NgClass } from '@angular/common';
 
-import DragService from '../week/dragService'
+import DragService from '../dragService'
 
 const moment = require('moment/moment');
 

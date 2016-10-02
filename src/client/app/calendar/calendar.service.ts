@@ -1,6 +1,7 @@
 const moment = require('moment/moment');
 
 interface CalEvent {
+    id: number
     name: string
     startDate: string
     timeStart?: string
@@ -11,6 +12,8 @@ interface CalEvent {
     endTime?: any
     offsetY?: number
     height?: number
+    width?: number
+    left?: number    
 }
 
 interface Subscribers {
@@ -28,13 +31,15 @@ class CalendarService {
         }
 
         this.items = [
-            {
+            {   
+                id: 1,
                 name: 'Hello!',
                 startDate: '09.20.2016',
                 startTime: moment('09.27.2016. 10:00', 'MM.DD.YYYY. HH:mm'),
                 timeStart: moment('09.27.2016. 10:00', 'MM.DD.YYYY. HH:mm').format('hh:mm a'),
             },
             {
+                id: 2,
                 name: 'Hello Again!',
                 startDate: '09.28.2016',
                 duration: 2,
@@ -43,6 +48,7 @@ class CalendarService {
                 
             },
             {
+                id: 3,
                 name: 'Hello There!',
                 startDate: '09.29.2016',
                 startTime: moment('09.29.2016. 07:00', 'MM.DD.YYYY. HH:mm'),
@@ -50,6 +56,7 @@ class CalendarService {
                 
             },
             {
+                id: 4,
                 name: 'Hello Michael!',
                 startDate: '09.29.2016',
                 startTime: moment('09.29.2016. 07:30', 'MM.DD.YYYY. HH:mm'),

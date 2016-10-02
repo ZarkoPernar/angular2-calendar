@@ -7,7 +7,7 @@
             
             <div class="events" [ngClass]="{'events--expanded': eventsExpanded}" draggable="true">
                 <div draggable-event class="event" (drag)="drag($event, event)" *ngFor="let event of events" (click)="eventClick(event, $event)" 
-                    [ngStyle]="{height: event.height + 'px', transform: 'translate3d(0, ' + event.offsetY + 'px, 1px)'}">
+                    [ngStyle]="{height: event.height + 'px', width: (event.width || 100) + '%', transform: 'translate3d(calc(' + (event.left ? event.left + '% + 1px' : '0px') + '), ' + event.offsetY + 'px, 1px)', zIndex: event.left}">
                     
                     <div class="event-name">
                         <span class="event-time">{{event.timeStart}}</span>  {{event.name}}
