@@ -1,28 +1,23 @@
 import { Component, Directive, Input, Output, ElementRef, EventEmitter } from '@angular/core';
 
+import { DragService, MouseDrag } from '../dragService'
+
 // bottom part of the event that is clicked for resize
 const resizeTargetHeight: number = 5
-
-export interface Hold {
-    mouseOffset?: number
-    resize?: boolean
-}
 
 @Directive({
     selector: '[draggable-event]',
 })
 
 export default class DraggableEvent {
-    @Output() drag: EventEmitter<Hold> = new EventEmitter()
-    hold: Hold
+    @Output() drag: EventEmitter<MouseDrag> = new EventEmitter()
+
+    hold: MouseDrag
     resize: boolean = false
 
     constructor(public el: ElementRef) {
-        // console.log(el)
-
         this.mouseDown = this.mouseDown.bind(this)
         this.el.nativeElement.addEventListener('mousedown', this.mouseDown)
-
     }   
 
     ngOnDestroy() {
@@ -30,7 +25,7 @@ export default class DraggableEvent {
     }
 
     didClickOnResize(e: MouseEvent): boolean {
-        return e.offsetY > (e.target.clientHeight - resizeTargetHeight)
+        return e.offsetY > (this.el.nativeElement.clientHeight - resizeTargetHeight)
     }
 
     mouseDown(e: MouseEvent) {
@@ -40,10 +35,11 @@ export default class DraggableEvent {
         e.preventDefault()
         
         this.hold = {
-            mouseOffset: e.offsetY,
+            mouseOffsetY: e.offsetY,
+            mouseOffsetX: e.offsetX,
             resize: this.resize,
         }        
-
+        
         this.drag.emit(this.hold)
     }
 }

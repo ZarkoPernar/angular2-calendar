@@ -14,6 +14,5 @@ import {ModalComponent} from './modal/modal.component';
   imports: [CommonModule, SharedModule],
   declarations: [CalendarComponent, CalDay, CalWeek, WeekDay, ModalComponent, draggableEvent],
   exports: [CalendarComponent],
-  providers: [CalendarService],
 })
 export class CalendarModule { }

@@ -23,14 +23,14 @@
                 </div>
             </div>
         </div>
-        <div class="week__main">
+        <div class="week__main" #weekMain>
             
             <div class="week__days">
                 <weekday 
                     *ngFor="let day of days" 
                     [day]="day"
-                    [scrollTop]="scrollTop" 
-                    [events]="events[day.date]"                     
+                    [movingStuff]="!!weekService.selectedEvent"
+                    [dayEvents]="events[day.date]"                     
                     (click)="dayClick(day, $event)">
                 </weekday>
             </div>

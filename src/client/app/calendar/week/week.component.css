@@ -24,7 +24,7 @@
 
 .week__scroll {
     display: flex;
-    height: 715px;
+    height: 660px;
     overflow-y: auto;
     width: 100%;
 }

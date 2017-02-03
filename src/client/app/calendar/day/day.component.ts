@@ -1,4 +1,4 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, Input, Output, SimpleChange } from '@angular/core';
 
 @Component({
     selector: '[cal-day]',
@@ -37,15 +37,15 @@ export default class DayComponent {
         this.showLess = this.showLess.bind(this)
     }   
 
-    dayClick(day, $event) {
+    dayClick(day: any, $event: MouseEvent) {
 
     } 
 
-    eventClick(day, $event) {
+    eventClick(day: any, $event: MouseEvent) {
         $event.stopPropagation()
     } 
 
-    showMore($event) {
+    showMore($event: MouseEvent) {
         this.eventsExpanded = true
         $event.stopPropagation()
         document.addEventListener('click', this.showLess)
@@ -54,8 +54,8 @@ export default class DayComponent {
         this.eventsExpanded = false
     }
 
-    ngOnChanges(change) {
-        if (change.events && change.events.currentValue && change.events.currentValue.length > 3) {
+    ngOnChanges({events}: {events: SimpleChange}) {
+        if (events.currentValue && events.currentValue.length > 3) {
             this.hasMore = true
         }
     }

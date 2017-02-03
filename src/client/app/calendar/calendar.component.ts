@@ -34,6 +34,7 @@ export interface CalendarSettings {
   styleUrls: ['./calendar.component.css'],
   templateUrl: './calendar.component.html',
   changeDetection: ChangeDetectionStrategy.Default,
+  providers: [CalendarService],
 })
 
 export class CalendarComponent {
@@ -48,8 +49,6 @@ export class CalendarComponent {
     monthDropdownVisible: boolean
     modality = new EventEmitter()
     events: any
-
-    service: CalendarService
     
     viewType: string    
     selectedDay: string
@@ -57,8 +56,7 @@ export class CalendarComponent {
     weekNumber: number
     center: any
         
-    constructor() {   
-        this.service = new CalendarService()      
+    constructor(private calendarService: CalendarService) {   
                        
         this.monthName = getMonthName(NOW)                  
         this.weekdays = {
@@ -76,8 +74,10 @@ export class CalendarComponent {
 
         this.addEvents()
 
-        this.service.subscribe('event_added', this.addEvent.bind(this))
-        this.service.subscribe('modal_closed', this.modalClosed.bind(this))
+        this.calendarService.observe.eventAdded.
+            subscribe(this.addEvent.bind(this))
+        this.calendarService.observe.modal.
+            subscribe(this.modalClosed.bind(this))
 
         this.monthDropdownVisible = false
     }
@@ -98,14 +98,14 @@ export class CalendarComponent {
     }
     
     addEvents() {
-        this.service.items.forEach(event => this.addEvent(event))
+        this.calendarService.items.forEach(event => this.addEvent(event))
     }
 
     addEvent(event: CalEvent) {
         if (!this.events[event.startDate]) {
             this.events[event.startDate] = [event]
         } else {
-            this.events[event.startDate] = this.events[event.startDate].concat([event])
+            this.events[event.startDate].push(event)
         }
     }
     

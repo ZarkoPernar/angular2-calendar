@@ -1,5 +1,5 @@
 
-<calendar-modal (eventAdded)="addEvent()" [selected]="selectedDay" [isOpen]="isModalOpen" [service]="service" (closed)="modalClosed($event)"></calendar-modal>
+<calendar-modal (eventAdded)="addEvent()" [selected]="selectedDay" [isOpen]="isModalOpen" (closed)="modalClosed($event)"></calendar-modal>
 
 <div class="container">
     <div class="toolbar">        
@@ -64,5 +64,6 @@
             </div>
         </div>
     </div>
-    <week *ngIf="viewType === 'Week'" [days]="days" [events]="events" [service]="service" [weekdays]="weekdays"></week>
+
+    <week *ngIf="viewType === 'Week'" [days]="days" [events]="events" [weekdays]="weekdays"></week>
 </div>

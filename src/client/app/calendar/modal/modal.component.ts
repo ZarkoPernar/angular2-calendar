@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, SimpleChange } from '@angular/core';
-import {CalendarService} from '../calendar.service'
+import { CalendarService, CalEvent } from '../calendar.service'
 
+var moment = require('moment')
 
 @Component({
   selector: 'calendar-modal',
@@ -11,13 +12,17 @@ import {CalendarService} from '../calendar.service'
 export class ModalComponent {
     @Input() isOpen: boolean
     @Input() selected: string
-    @Input() service: CalendarService
     
     @Output() modalClosed = new EventEmitter()
     
-    event: any
+    event: {
+        name: string
+        startDate: string
+        endDate: string
+    }
+    newEvent: CalEvent
     
-    constructor() {
+    constructor(private calendarService: CalendarService) {
         this.event = {
             name: '',
             startDate: '',
@@ -25,24 +30,29 @@ export class ModalComponent {
         }
     }
     close() {
-        this.service.emit('modal_closed', {
+        this.calendarService.observe.modal.emit({
             value: false
         })
     }
 
     addNewEvent() {
-        this.service.addNewEvent(Object.assign({}, this.event, {
-            createdAt: Date.now(),
-        }))
+        this.newEvent = {
+            id: Date.now(),
+            name: this.event.name,
+            startDate: this.event.startDate,
+            startTime: moment(this.event.startDate, 'MM.DD.YYYY'),
+        }
+
+        this.calendarService.addNewEvent(this.newEvent)
         this.event.name = ''
         this.close()
     }
     
     ngOnInit() {}
     
-    ngOnChanges(changes) {
-        if (changes.selected) {
-            this.event.startDate = changes.selected.currentValue
+    ngOnChanges({selected} : {selected: SimpleChange}) {
+        if (selected) {
+            this.event.startDate = selected.currentValue
         }
     }
 }

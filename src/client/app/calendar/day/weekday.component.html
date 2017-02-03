@@ -1,13 +1,18 @@
-<div class="day" #day>
+<div class="day" #day id="{{day.dayOfMonth}}">
     <div class="day-container">
         <div class="day-long">
             <span class="number">
                 {{day.dayOfMonth}}
             </span>
             
-            <div class="events" [ngClass]="{'events--expanded': eventsExpanded}" draggable="true">
-                <div draggable-event class="event" (drag)="drag($event, event)" *ngFor="let event of events" (click)="eventClick(event, $event)" 
-                    [ngStyle]="{height: event.height + 'px', width: (event.width || 100) + '%', transform: 'translate3d(calc(' + (event.left ? event.left + '% + 1px' : '0px') + '), ' + event.offsetY + 'px, 1px)', zIndex: event.left}">
+            <div class="events" [ngClass]="{'events--expanded': eventsExpanded}">
+                <div draggable-event class="event" (drag)="drag(event, $event)" *ngFor="let event of events" (click)="eventClick(event, $event)" 
+                    [ngStyle]="{
+                        height: event.height + 'px', 
+                        width: (event.width || 100) + '%', 
+                        transform: 'translate3d(calc(' + (event.left ? event.left + '% + 1px' : '0px') + '), ' + event.offsetY + 'px, 1px)', 
+                        zIndex: event.left
+                    }">
                     
                     <div class="event-name">
                         <span class="event-time">{{event.timeStart}}</span>  {{event.name}}

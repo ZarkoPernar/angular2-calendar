@@ -1,8 +1,11 @@
-import { Component, Input, Output, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, Output, ElementRef, ViewChild, AfterViewInit, OnChanges, SimpleChange, ChangeDetectionStrategy } from '@angular/core';
 import { NgFor, NgClass } from '@angular/common';
 
-import DragService from '../dragService'
+import { CalendarService } from '../calendar.service';
+import { WeekService } from './week.service';
 
+import {DragService} from '../dragService'
+import {DAY} from '../calendar.component'
 const moment = require('moment/moment');
 
 interface SideHour {
@@ -14,25 +17,26 @@ interface SideHour {
     moduleId: module.id,
     styleUrls: ['./week.component.css'],
     templateUrl: './week.component.html',
-    providers: [DragService],
+    providers: [WeekService, DragService],
+    changeDetection: ChangeDetectionStrategy.Default,
 })
 
 // [ngClass]="{today: day.isToday, selected: selectedDay === day.date, inactive: day.monthName !== monthName}" 
 
-export default class WeekComponent {
+export default class WeekComponent implements AfterViewInit, OnChanges {
     @Input() days: any
     @Input() weekdays: any
     @Input() events: any
-    @Input() service: any
 
-    @ViewChild('weekScroll') scroll
+    @ViewChild('weekScroll') scroll: ElementRef
+    @ViewChild('weekMain') weekMain: ElementRef
 
     hasMore: boolean
     eventsExpanded: boolean
     scrollTop: number = 0
-    hours: Array<SideHour>
+    hours: SideHour[]
     
-    constructor(public el: ElementRef) {
+    constructor(public weekService: WeekService, private calendarService: CalendarService, public el: ElementRef, public dragService: DragService) {
         this.hasMore = false
         this.eventsExpanded = false
         
@@ -42,20 +46,34 @@ export default class WeekComponent {
     } 
 
     ngAfterViewInit() {
-        this.scroll.nativeElement.addEventListener('scroll', (e) => {
+        console.log('init')
+
+        this.weekService.addMainElement(this.weekMain)
+
+        this.scroll.nativeElement.addEventListener('scroll', (e: any) => {
             this.scrollTop = e.target.scrollTop
+            this.weekService.setScrollTop(e.target.scrollTop)
         })        
     }
 
-    dayClick(day, $event) {
+    ngOnChanges({events}: {events: SimpleChange}) {
+        if (events && events.currentValue) {
+            this.weekService.addEvents(events.currentValue)
+            if (events.currentValue.length > 3) {
+                this.hasMore = true
+            }
+        }
+    }
+
+    dayClick(day: DAY, $event: MouseEvent) {
 
     } 
 
-    eventClick(day, $event) {
+    eventClick(day: DAY, $event: MouseEvent) {
         $event.stopPropagation()
     } 
 
-    showMore($event) {
+    showMore($event: MouseEvent) {
         this.eventsExpanded = true
         $event.stopPropagation()
         document.addEventListener('click', this.showLess)
@@ -64,11 +82,7 @@ export default class WeekComponent {
         this.eventsExpanded = false
     }
 
-    ngOnChanges(change) {
-        if (change.events && change.events.currentValue && change.events.currentValue.length > 3) {
-            this.hasMore = true
-        }
-    }
+    
 }
 
 function createHours():Array<any> {    
